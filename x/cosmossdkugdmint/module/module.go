@@ -20,6 +20,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	// this line is used by starport scaffolding # 1
@@ -182,7 +183,7 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 	minter := am.keeper.GetMinter(ctx)
 	params := am.keeper.GetParams(ctx)
 	height := uint64(sdkCtx.BlockHeight())
-	bondedRatio := am.keeper.BondedRatio(sdkCtx)
+	bondedRatio, _ := am.keeper.BondedRatio(sdkCtx)
 
 	minter.SubsidyHalvingInterval = params.SubsidyHalvingInterval
 	am.keeper.SetMinter(ctx, minter)
@@ -339,7 +340,7 @@ type ModuleInputs struct {
 
 	AccountKeeper types.AccountKeeper
 	BankKeeper    types.BankKeeper
-	StakingKeeper types.StakingKeeper
+	StakingKeeper *stakingkeeper.Keeper
 }
 
 type ModuleOutputs struct {
@@ -364,7 +365,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		in.Cdc,
 		in.StoreService,
 		in.Logger,
-		in.StakingKeeper,
+		*in.StakingKeeper,
 		in.AccountKeeper,
 		in.BankKeeper,
 		feeCollectorName,

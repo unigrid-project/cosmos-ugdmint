@@ -3,6 +3,7 @@ package types
 import (
 	"context"
 
+	"cosmossdk.io/core/address"
 	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,15 +11,15 @@ import (
 
 // StakingKeeper defines the expected staking keeper
 type StakingKeeper interface {
-	StakingTokenSupply(ctx sdk.Context) math.Int
-	BondedRatio(ctx sdk.Context) math.LegacyDec
+	StakingTokenSupply(ctx sdk.Context) (math.Int, error)
+	BondedRatio(ctx sdk.Context) (math.LegacyDec, error)
 }
 
 // AccountKeeper defines the expected interface for the Account module.
 type AccountKeeper interface {
-	GetModuleAddress(name string) sdk.AccAddress
+	AddressCodec() address.Codec
 
-	// TODO remove with genesis 2-phases refactor https://github.com/cosmos/cosmos-sdk/issues/2862
+	GetModuleAddress(name string) sdk.AccAddress
 	SetModuleAccount(context.Context, sdk.ModuleAccountI)
 	GetModuleAccount(ctx context.Context, moduleName string) sdk.ModuleAccountI
 

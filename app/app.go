@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -148,7 +147,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 
 // AppConfig returns the default app config.
 func AppConfig() depinject.Config {
-	fmt.Println("APP GO")
 	return depinject.Configs(
 		appConfig,
 		// Loads the ao config from a YAML file.

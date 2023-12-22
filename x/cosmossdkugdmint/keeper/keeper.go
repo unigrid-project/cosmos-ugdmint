@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/unigrid-project/cosmos-sdk-ugdmint/x/cosmossdkugdmint/types"
 )
@@ -20,7 +20,7 @@ type (
 		cdc              codec.BinaryCodec
 		storeService     store.KVStoreService
 		logger           log.Logger
-		stakingKeeper    types.StakingKeeper
+		stakingKeeper    stakingkeeper.Keeper
 		bankKeeper       types.BankKeeper
 		feeCollectorName string
 		hedgehogUrl      string
@@ -35,7 +35,7 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
 	logger log.Logger,
-	sk types.StakingKeeper,
+	sk stakingkeeper.Keeper,
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	feeCollectorName string,
@@ -104,13 +104,13 @@ func (k Keeper) SetMinter(ctx context.Context, minter types.Minter) {
 
 // StakingTokenSupply implements an alias call to the underlying staking keeper's
 // StakingTokenSupply to be used in BeginBlocker.
-func (k Keeper) StakingTokenSupply(ctx sdk.Context) math.Int {
+func (k Keeper) StakingTokenSupply(ctx sdk.Context) (math.Int, error) {
 	return k.stakingKeeper.StakingTokenSupply(ctx)
 }
 
 // BondedRatio implements an alias call to the underlying staking keeper's
 // BondedRatio to be used in BeginBlocker.
-func (k Keeper) BondedRatio(ctx sdk.Context) math.LegacyDec {
+func (k Keeper) BondedRatio(ctx sdk.Context) (math.LegacyDec, error) {
 	return k.stakingKeeper.BondedRatio(ctx)
 }
 
@@ -136,11 +136,11 @@ func (k Keeper) AddNewMint(ctx context.Context, coins sdk.Coins, reciver sdk.Acc
 	return k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, reciver, coins)
 }
 
-func (k Keeper) GetAccount(ctx context.Context, addr sdk.AccAddress) authtypes.AccountI {
+func (k Keeper) GetAccount(ctx context.Context, addr sdk.AccAddress) sdk.AccountI {
 	return k.authKeeper.GetAccount(ctx, addr)
 }
 
-func (k Keeper) SetAccount(ctx context.Context, acc authtypes.AccountI) {
+func (k Keeper) SetAccount(ctx context.Context, acc sdk.AccountI) {
 	k.authKeeper.SetAccount(ctx, acc)
 }
 
