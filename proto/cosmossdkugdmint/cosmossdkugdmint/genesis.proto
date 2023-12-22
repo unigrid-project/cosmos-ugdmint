@@ -1,0 +1,17 @@
+syntax = "proto3";
+package cosmossdkugdmint.cosmossdkugdmint;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "cosmossdkugdmint/cosmossdkugdmint/params.proto";
+
+option go_package = "github.com/unigrid-project/cosmos-sdk-ugdmint/x/cosmossdkugdmint/types";
+
+// GenesisState defines the cosmossdkugdmint module's genesis state.
+message GenesisState {
+  // minter is a space for holding current subsidy information.
+  Minter minter = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+
+  // params defines all the parameters of the module.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
